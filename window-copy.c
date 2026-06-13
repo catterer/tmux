@@ -6113,7 +6113,6 @@ window_copy_cursor_up(struct window_mode_entry *wme, int scroll_only)
 	struct screen			*s = &data->screen;
 	u_int				 ox, oy, px, py;
 	int				 norectsel;
-	int				 scrolloff;
 
 	norectsel = data->screen.sel == NULL || !data->rectflag;
 	oy = screen_hsize(data->backing) + data->cy - data->oy;
@@ -6127,8 +6126,7 @@ window_copy_cursor_up(struct window_mode_entry *wme, int scroll_only)
 		window_copy_other_end(wme);
 
 	if (scroll_only && options_get_number(oo, "mode-keys") == MODEKEY_VI) {
-		scrolloff = options_get_number(oo, "copy-mode-scrolloff");
-		if (data->cy + scrolloff < screen_size_y(s) - 1)
+		if (data->cy < screen_size_y(s) - 1)
 			window_copy_update_cursor(wme, data->cx, data->cy + 1);
 	}
 
@@ -6195,7 +6193,6 @@ window_copy_cursor_down(struct window_mode_entry *wme, int scroll_only)
 	struct screen			*s = &data->screen;
 	u_int				 ox, oy, px, py;
 	int				 norectsel;
-	int				 scrolloff;
 
 	norectsel = data->screen.sel == NULL || !data->rectflag;
 	oy = screen_hsize(data->backing) + data->cy - data->oy;
@@ -6209,8 +6206,7 @@ window_copy_cursor_down(struct window_mode_entry *wme, int scroll_only)
 		window_copy_other_end(wme);
 
 	if (scroll_only && options_get_number(oo, "mode-keys") == MODEKEY_VI) {
-		scrolloff = options_get_number(oo, "copy-mode-scrolloff");
-		if (data->cy > (uint)scrolloff)
+		if (data->cy > 0)
 			window_copy_update_cursor(wme, data->cx, data->cy - 1);
 	}
 
