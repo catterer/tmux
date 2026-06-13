@@ -326,6 +326,16 @@ const struct options_table_entry options_table[] = {
 		  "If empty, no command is run."
 	},
 
+	{ .name = "copy-mode-scrolloff",
+	  .type = OPTIONS_TABLE_NUMBER,
+	  .scope = OPTIONS_TABLE_WINDOW,
+	  .minimum = 0,
+	  .maximum = 1000,
+	  .default_num = 0,
+	  .text = "Set the number of screen lines to keep above and below the "
+		  "cursor in copy mode."
+	},
+
 	{ .name = "cursor-colour",
 	  .type = OPTIONS_TABLE_COLOUR,
 	  .scope = OPTIONS_TABLE_WINDOW|OPTIONS_TABLE_PANE,

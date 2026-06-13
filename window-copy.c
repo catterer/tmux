@@ -6109,9 +6109,11 @@ static void
 window_copy_cursor_up(struct window_mode_entry *wme, int scroll_only)
 {
 	struct window_copy_mode_data	*data = wme->data;
+	struct options			*oo = wme->wp->window->options;
 	struct screen			*s = &data->screen;
 	u_int				 ox, oy, px, py;
 	int				 norectsel;
+	int				 scrolloff;
 
 	norectsel = data->screen.sel == NULL || !data->rectflag;
 	oy = screen_hsize(data->backing) + data->cy - data->oy;
@@ -6123,6 +6125,12 @@ window_copy_cursor_up(struct window_mode_entry *wme, int scroll_only)
 
 	if (data->lineflag == LINE_SEL_LEFT_RIGHT && oy == data->sely)
 		window_copy_other_end(wme);
+
+	if (scroll_only && options_get_number(oo, "mode-keys") == MODEKEY_VI) {
+		scrolloff = options_get_number(oo, "copy-mode-scrolloff");
+		if (data->cy + scrolloff < screen_size_y(s) - 1)
+			window_copy_update_cursor(wme, data->cx, data->cy + 1);
+	}
 
 	if (scroll_only || data->cy == 0) {
 		if (norectsel)
@@ -6183,9 +6191,11 @@ static void
 window_copy_cursor_down(struct window_mode_entry *wme, int scroll_only)
 {
 	struct window_copy_mode_data	*data = wme->data;
+	struct options			*oo = wme->wp->window->options;
 	struct screen			*s = &data->screen;
 	u_int				 ox, oy, px, py;
 	int				 norectsel;
+	int				 scrolloff;
 
 	norectsel = data->screen.sel == NULL || !data->rectflag;
 	oy = screen_hsize(data->backing) + data->cy - data->oy;
@@ -6197,6 +6207,12 @@ window_copy_cursor_down(struct window_mode_entry *wme, int scroll_only)
 
 	if (data->lineflag == LINE_SEL_RIGHT_LEFT && oy == data->endsely)
 		window_copy_other_end(wme);
+
+	if (scroll_only && options_get_number(oo, "mode-keys") == MODEKEY_VI) {
+		scrolloff = options_get_number(oo, "copy-mode-scrolloff");
+		if (data->cy > (uint)scrolloff)
+			window_copy_update_cursor(wme, data->cx, data->cy - 1);
+	}
 
 	if (scroll_only || data->cy == screen_size_y(s) - 1) {
 		if (norectsel)
